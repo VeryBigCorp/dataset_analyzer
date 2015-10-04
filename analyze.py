@@ -55,9 +55,12 @@ def checkTwoDomains(i, j):
 	#implement Counter to remove duplicates/tally total successes of each combination
 	for key in successArray:
 		successArray[key] = Counter(successArray[key])
+	"""
 	for key, value in sorted(successArray.iteritems()):
 		print key, value
 		print "\n"
+	"""
+	return successArray
 
 """
 	Input: a list consisting of all the domains you want to cross analyze
@@ -72,21 +75,22 @@ def checkNDomains(listOfDomains):
 	from collections import Counter
 
 	successArray = defaultdict(list)
-	domains = globals()
+	domains = {}
 	#dynamically create lists for each domain entered in input list; each domain gets it own list
-	for x in range (0, len(listOfDomains)):
-		y = listOfDomains[x]
-		domains['domain_{0}'.format(x)] = {}
-		for row in data:
-			domains['domain_{0}'.format(x)][row[y]] = domains.get(row[y], 0) + 1
-
+	for domain in listOfDomains:
+		domains[domain] = {}
+	for domain1, domain1_checks in domains.items():
+		for domain2 in listOfDomains:
+			if domain2 != domain1:
+				domain1_checks[domain2] = checkTwoDomains(domain1,domain2)
+	return domains
 	#attempt to cross check each combination...don't know how to do this since the # of loops are unknown...maybe do a more efficient way for this?
-	for row in data:
+	"""for row in data:
 		if all(x in row for x in listOfDomains):
 			if row[8] not in ('?', 'T'):
 				if(int(row[8]) >= 3):
 					successArray[key1].append((key2, 1))
-
+	"""
 
 
 
@@ -102,6 +106,7 @@ if __name__ == "__main__":
 	with open('cubesat.csv', 'rb') as csvfile:
 		analyzer = csv.reader(csvfile, delimiter=",", quotechar="|")
 		data = list(analyzer);
-	checkOneDomain(2)
-	checkTwoDomains(1, 5)
-	checkNDomains([3, 5, 1, 4])
+	#checkOneDomain(4)
+	#checkTwoDomains(4, 7)
+	domains = checkNDomains([4,7,8,9])
+	print domains
